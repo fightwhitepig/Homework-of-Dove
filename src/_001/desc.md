@@ -6,4 +6,4 @@
 
 如下图：
 
-![](http://...)
+![](https://github.com/longpp/Homework-of-Dove/blob/master/src/_001/sample.png?raw=true)
