@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check</title>
+    <style>
+        canvas {
+
+            border: 1px black solid;
+        }
+    </style>
+</head>
+<body>
+<canvas id="id-canvas" width="300" height="300">
+</canvas>
+
+
+<button id="id-refresh" onclick="refresh()">刷新</button>
+<button id="id-confirm" onclick="confirm()">确认</button>
+
+<button id="id-test" onclick="test()">test</button>
+
+<script>
+    let img = new Image();
+    img.src = 'bg.png';
+    img.onload = function () {
+        context.drawImage(img, 0, 0)
+    };
+
+    function refresh() {
+        context.clearRect(0, 0, 300, 300);
+        context.drawImage(img, 0, 0)
+
+        let random = Math.floor(Math.random() * dic.length);
+        let str = dic[random];
+
+        let points = [];
+
+        while (points.length < 4) {
+            let x = Math.floor(Math.random() * 12) + 2;
+            let y = Math.floor(Math.random() * 12) + 2;
+            let l = points.length;
+            if(l == 0){
+                var p = [x,y,str.substr(0, 1)];
+                points.push(p)
+            }
+            for (let i = 0; i < l ; i++) {
+                var point = points[i];
+                if (point[0] != x || point[1] != y){
+                    var p = [x,y,str.substr(l, 1)];
+                    points.push(p);
+                    break;
+                }
+            }
+        }
+
+        drawText(points)
+    }
+
+    function drawText(points){
+        context.font = "20px Arial";
+        for (let i = 0; i < points.length; i++) {
+            let p = points[i];
+            let x = p[0] * 20 - 10;
+            let y = p[1] * 20 - 10;
+            let str = p[2]
+            context.strokeText(str, x, y)
+        }
+    }
+
+    function windowToCanvas(canvas, x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x: (x - bbox.left) * (canvas.width / bbox.width),
+            y: (y - bbox.top) * (canvas.height / bbox.height)
+        };
+    }
+
+    function confirm() {
+        log('confirm')
+    }
+
+    function test() {
+        log(Math.floor(Math.random() * 5))
+    }
+
+
+    let dic = ["百里挑一", "金玉满堂", "背水一战", "霸王别姬", "天上人间", "海阔天空"];
+
+    let log = console.log.bind(console);
+    let canvas = document.querySelector('#id-canvas');
+    let context = canvas.getContext('2d');
+
+    canvas.addEventListener('mousedown', function (event) {
+        var p = windowToCanvas(canvas, event.pageX, event.pageY)
+        log(p.x)
+        log(p.y)
+    })
+</script>
+
+</body>
+</html>
