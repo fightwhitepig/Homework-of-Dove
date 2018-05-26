@@ -18,8 +18,6 @@
 <button id="id-refresh" onclick="refresh()">刷新</button>
 <button id="id-confirm" onclick="confirm()">确认</button>
 
-<button id="id-test" onclick="test()">test</button>
-
 <script>
     let img = new Image();
     img.src = 'bg.png';
@@ -27,34 +25,63 @@
         context.drawImage(img, 0, 0)
     };
 
+    let clickPoints = [];
+    let points = [];
+
+    let step = 0;
+
     function refresh() {
+        step = 0;
+        clickPoints = [];
+        points = [];
+
         context.clearRect(0, 0, 300, 300);
-        context.drawImage(img, 0, 0)
+        context.drawImage(img, 0, 0);
 
         let random = Math.floor(Math.random() * dic.length);
         let str = dic[random];
-
-        let points = [];
 
         while (points.length < 4) {
             let x = Math.floor(Math.random() * 12) + 2;
             let y = Math.floor(Math.random() * 12) + 2;
             let l = points.length;
-            if(l == 0){
-                var p = [x,y,str.substr(0, 1)];
+            if(l === 0){
+                let p = [x,y,str.substr(0, 1)];
                 points.push(p)
+                continue;
             }
+
+            let b = true;
             for (let i = 0; i < l ; i++) {
-                var point = points[i];
-                if (point[0] != x || point[1] != y){
-                    var p = [x,y,str.substr(l, 1)];
-                    points.push(p);
+                let point = points[i];
+                if (point[0] === x && point[1] === y){
+                    b = false;
                     break;
                 }
+            }
+            if (b) {
+                let p = [x,y,str.substr(l, 1)];
+                points.push(p);
             }
         }
 
         drawText(points)
+    }
+
+    function drawCircleByStep(x,y){
+        if (step >= 4 || points.length === 0) {
+            return;
+        }
+        step += 1;
+        context.beginPath();
+        context.arc(x,y,10,0,360,false);
+        context.fillStyle="red";//填充颜色,默认是黑色
+        context.fill();//画实心圆
+        context.closePath();
+        context.fillStyle="black";
+        context.fillText(step, x - 5, y + 5);
+        let p = [x, y];
+        clickPoints.push(p);
     }
 
     function drawText(points){
@@ -63,13 +90,13 @@
             let p = points[i];
             let x = p[0] * 20 - 10;
             let y = p[1] * 20 - 10;
-            let str = p[2]
+            let str = p[2];
             context.strokeText(str, x, y)
         }
     }
 
     function windowToCanvas(canvas, x, y) {
-        var bbox = canvas.getBoundingClientRect();
+        let bbox = canvas.getBoundingClientRect();
         return {
             x: (x - bbox.left) * (canvas.width / bbox.width),
             y: (y - bbox.top) * (canvas.height / bbox.height)
@@ -77,13 +104,30 @@
     }
 
     function confirm() {
-        log('confirm')
-    }
 
-    function test() {
-        log(Math.floor(Math.random() * 5))
-    }
+        log(points);
+        log(clickPoints);
 
+        if (points.length !== 4 || clickPoints.length !== 4) {
+            return;
+        }
+
+        for (let i = 0; i < points.length; i++) {
+            let p = points[i];
+            let x = p[0] * 20 - 10;
+            let y = p[1] * 20 - 10;
+
+            let clickP = clickPoints[i];
+            let cx = clickP[0];
+            let cy = clickP[1]
+            if (cx > x + 20 || cx < x - 20 || cy > y + 20 || cy < y - 20) {
+                alert('失败！');
+                return;
+            }
+        }
+        alert('成功！');
+        return;
+    }
 
     let dic = ["百里挑一", "金玉满堂", "背水一战", "霸王别姬", "天上人间", "海阔天空"];
 
@@ -92,9 +136,8 @@
     let context = canvas.getContext('2d');
 
     canvas.addEventListener('mousedown', function (event) {
-        var p = windowToCanvas(canvas, event.pageX, event.pageY)
-        log(p.x)
-        log(p.y)
+        let p = windowToCanvas(canvas, event.pageX, event.pageY);
+        drawCircleByStep(p.x, p.y)
     })
 </script>
 
