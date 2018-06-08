@@ -4,5 +4,6 @@
 
 [002.Python基础学习(6.6~6.24)][002]
 
-[001]: https://github.com/longpp/Homework-of-Dove/blob/master/src/_001/desc.md
-[002]: 
+[001]: https://github.com/longpp/Homework-of-Dove/tree/master/src/_001
+[002]: https://github.com/longpp/Homework-of-Dove/tree/master/src/_002
+
